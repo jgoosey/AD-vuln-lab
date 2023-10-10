@@ -5,7 +5,7 @@ Vagrant.configure("2") do |config|
     v.cpus = 2
     v.check_guest_additions = false
     v.linked_clone = true
-    v.gui = true
+    v.gui = false
   end
 
   config.vm.define "dc" do |dc|

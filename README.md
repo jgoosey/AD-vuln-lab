@@ -37,4 +37,4 @@ If you run into some problems while running the main playbook, you can also the 
 
 ### Thanks to
 
-This repo is based on the work of [jckhmr](https://github.com/jckhmr/adlab) and [kkolk](https://github.com/kkolk/mssql).
+This repo is based on the work of [alebob AD-lab](https://github.com/alebov/AD-lab) with inspiration from [GOAD](https://github.com/Orange-Cyberdefense/GOAD) and others.

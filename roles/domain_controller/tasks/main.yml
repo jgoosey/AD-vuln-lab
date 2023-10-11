@@ -9,23 +9,6 @@
     Ensure: present
     UserAuthentication: Secure
 
-- name: Windows | Check for xNetworking Powershell module
-  win_psmodule:
-    name: xNetworking
-    state: present
-
-- name: Firewall | Allow RDP through Firewall
-  win_dsc:
-    resource_name: xFirewall
-    Name: "Administrator access for RDP (TCP-In)"
-    Ensure: present
-    Enabled: True
-    Profile: "Domain"
-    Direction: "Inbound"
-    Localport: "3389"
-    Protocol: "TCP"
-    Description: "Opens the listener port for RDP"
-
 - name: Ensure chocolatey is installed
   win_chocolatey:
     name:
@@ -74,7 +57,7 @@
 
 - name: Reboot to complete LAB.local domain creation
   win_reboot:
-  when: check_domain.changed
+  when: check_domain.reboot_required
 
 - name: Ensure the server is a domain controller
   win_domain_controller:
@@ -88,7 +71,7 @@
 
 - name: Reboot to complete domain controller setup
   win_reboot:
-  when: check_domain_controller.changed
+  when: check_domain_controller.reboot_required
 
 - name: Ensure that admin@LAB.local is present as Domain Admin
   win_domain_user:

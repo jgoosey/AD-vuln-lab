@@ -1,8 +1,4 @@
 ---
-name: Build all machines
-hosts: default
-serial: 3
-tasks:
 - import_playbook: domain_controller.yml
 - import_playbook: member_server.yml
 - import_playbook: win_workstation.yml

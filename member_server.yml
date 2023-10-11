@@ -1,11 +1,6 @@
 ---
-
-- name: cyberloop.local server configuration
-  hosts: win_server
-
+- name: DC02 Server Configuration
+  hosts: dc02
   roles:
-    - common
     - member_server
-    - mssql
-
-...
+    - settings/firewall

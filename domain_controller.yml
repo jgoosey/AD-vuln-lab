@@ -1,7 +1,7 @@
 ---
-- name: cyberloop.local Domain Controller configuration
-  hosts: domain_controller
-  serial: 1
+- name: DC01 Server Configuration
+  hosts: dc01
   roles:
-  - common
   - domain_controller
+  - settings/windows_defender
+  - settings/firewall

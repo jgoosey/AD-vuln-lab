@@ -1,1 +1,6 @@
-.vagrant
+.vagrant/
+.venv/
+venv/
+bin/
+lib/
+pyvenv.cfg

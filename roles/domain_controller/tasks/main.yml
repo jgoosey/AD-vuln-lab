@@ -1,3 +1,31 @@
+- name: Windows | Check for xRemoteDesktopAdmin Powershell module
+  win_psmodule:
+    name: xRemoteDesktopAdmin
+    state: present
+
+- name: Windows | Enable Remote Desktop
+  win_dsc:
+    resource_name: xRemoteDesktopAdmin
+    Ensure: present
+    UserAuthentication: Secure
+
+- name: Windows | Check for xNetworking Powershell module
+  win_psmodule:
+    name: xNetworking
+    state: present
+
+- name: Firewall | Allow RDP through Firewall
+  win_dsc:
+    resource_name: xFirewall
+    Name: "Administrator access for RDP (TCP-In)"
+    Ensure: present
+    Enabled: True
+    Profile: "Domain"
+    Direction: "Inbound"
+    Localport: "3389"
+    Protocol: "TCP"
+    Description: "Opens the listener port for RDP"
+
 - name: Ensure chocolatey is installed
   win_chocolatey:
     name:
@@ -15,18 +43,15 @@
     name: '{{ item }}'
     state: present
   with_items:
-  - notepadplusplus
-  - putty
   - python
   - git
   - 7zip
   - sysinternals
-  - wget
   - pstools
 
-- name: Change the hostname to domain-controller
+- name: Change the hostname to DC01
   win_hostname:
-    name: domain-controller
+    name: DC01
   register: win_hostname
 
 - name: Reboot
@@ -41,20 +66,20 @@
     state: present
   ignore_errors: yes
 
-- name: Ensure that cyberloop.local domain exixts
+- name: Ensure that LAB.local domain exists
   win_domain:
-    dns_domain_name: cyberloop.local
+    dns_domain_name: lab.local
     safe_mode_password: StrongPass123!
   register: check_domain
 
-- name: Reboot to complete cyberloop.local domain creation
+- name: Reboot to complete LAB.local domain creation
   win_reboot:
   when: check_domain.changed
 
 - name: Ensure the server is a domain controller
   win_domain_controller:
-    dns_domain_name: cyberloop.local
-    domain_admin_user: Administrator@cyberloop.local
+    dns_domain_name: LAB.local
+    domain_admin_user: Administrator@lab.local
     domain_admin_password: StrongPass123!
     safe_mode_password: StrongPass123!
     state: domain_controller
@@ -65,47 +90,33 @@
   win_reboot:
   when: check_domain_controller.changed
 
-- name: Check for xDnsServer Powershell module
-  win_psmodule:
-    name: xDnsServer
-    state: present
-
-- name: Configure DNS Forwarders
-  win_dsc:
-    resource_name: xDnsServerSetting
-    Name: DNSServerProperties
-    NoRecursion: false
-    Forwarders:
-      - "8.8.8.8"
-      - "8.8.4.4"
-
-- name: Ensure that admin@cyberloop.local is present as Domain Admin
+- name: Ensure that admin@LAB.local is present as Domain Admin
   win_domain_user:
     name: admin
     password: StrongPass123!
     password_never_expires: yes
     state: present
-    path: cn=Users,dc=CYBERLOOP,dc=local
+    path: cn=Users,dc=lab,dc=local
     groups:
       - Domain Admins
 
-- name: Ensure that bob@cyberloop.local is present in OU cn=Users,dc=CYBERLOOP,dc=local
+- name: Ensure that bob@LAB.local is present in OU cn=Users,dc=LAB,dc=local
   win_domain_user:
     name: bob
     password: StrongPass123!
     password_never_expires: yes
     state: present
-    path: cn=Users,dc=CYBERLOOP,dc=local
+    path: cn=Users,dc=lab,dc=local
     groups:
       - Users
 
-- name: Ensure that alice@cyberloop.local is present in OU cn=Users,dc=CYBERLOOP,dc=local
+- name: Ensure that alice@LAB.local is present in OU cn=Users,dc=LAB,dc=local
   win_domain_user:
     name: alice
     password: StrongPass123!
     password_never_expires: yes
     state: present
-    path: cn=Users,dc=CYBERLOOP,dc=local
+    path: cn=Users,dc=lab,dc=local
     groups:
       - Users
 
@@ -113,47 +124,47 @@
   win_domain_group:
     name: allTeams
     scope: global
-    path: DC=cyberloop,DC=local
+    path: DC=lab,DC=local
     state: present
 
-- name: Create DBAOracle
+- name: Create DBAOracle group
   win_domain_group:
     name: DBAOracle
     scope: global
-    path: DC=cyberloop,DC=local
+    path: DC=lab,DC=local
     state: present
 
-- name: Create DBASQLServer
+- name: Create DBASQLServer group
   win_domain_group:
     name: DBASQLServer
     scope: global
-    path: DC=cyberloop,DC=local
+    path: DC=lab,DC=local
     state: present
 
 - name: Create DBAMongo group
   win_domain_group:
     name: DBAMongo
     scope: global
-    path: DC=cyberloop,DC=local
+    path: DC=lab,DC=local
     state: present
 
 - name: Create DBARedis group
   win_domain_group:
     name: DBARedis
     scope: global
-    path: DC=cyberloop,DC=local
+    path: DC=lab,DC=local
     state: present
 
-- name: Create DBAEnterprise Group ...
+- name: Create DBAEnterprise group
   win_domain_group:
     name: DBAEnterprise
     scope: global
-    path: DC=cyberloop,DC=local
+    path: DC=lab,DC=local
     state: present
 
-- name: Create a Test Group ...
+- name: Create a Test group
   win_domain_group:
     name: JustATestDemo
     scope: global
-    path: DC=cyberloop,DC=local
+    path: DC=lab,DC=local
     state: present

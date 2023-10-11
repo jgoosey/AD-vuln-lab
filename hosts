@@ -1,25 +1,10 @@
-[dc]
-192.168.56.10
+[default]
+dc01 ansible_host=192.168.56.10 dict_key=dc01
+dc02 ansible_host=192.168.56.11 dict_key=dc02
+wkst01 ansible_host=192.168.56.20 dict_key=wkst01
 
-[dc:vars]
-ansible_user=vagrant
-ansible_password=vagrant
-ansible_connection=winrm
-ansible_winrm_server_cert_validation=ignore
-
-[dc2]
-192.168.56.11
-
-[dc2:vars]
-ansible_user=vagrant
-ansible_password=vagrant
-ansible_connection=winrm
-ansible_winrm_server_cert_validation=ignore
-
-[wkst]
-192.168.56.20
-
-[wkst:vars]
+[all:vars]
+domain_name=lab.local
 ansible_user=vagrant
 ansible_password=vagrant
 ansible_connection=winrm
